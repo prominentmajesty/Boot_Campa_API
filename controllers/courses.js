@@ -59,11 +59,18 @@ exports.getCourse = async (req, res, next) => {
 // @access Private
 exports.addCourse = async (req, res, next) => {
     req.body.bootcamp = req.params.bootcampId;
+    req.body.user = req.user.id;
+
     try{
         const bootcamp = await Bootcamp.findById(req.params.bootcampId);
             if(!bootcamp){
-                return res.status(404).json({Error : `No course with id of  ${req.params.bootcampId}`});
+                return res.status(404).json({Error : `No course with id of  ${req.user.bootcampId}`});
             }
+
+            // Make sure user is the course owner
+            if(bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin'){
+                return res.status(401).json({sucess : false, message : `User ${req.user.id} is not authorized to add a course to bootcamp ${bootcamp._id}`});
+            };
 
             const course = await Course.create(req.body);
 
@@ -85,8 +92,13 @@ exports.updateCourse = async (req, res, next) => {
     try{
         let course = await Course.findById(req.params.id);
             if(!course){
-                return res.status(404).json({Error : `No course with id of  ${req.params.id}`});
+                return res.status(404).json({Error : `No course with id of ${req.params.id}`});
             }
+
+            // Make sure user is the course owner
+            if(course.user.toString() !== req.user.id && req.user.role !== 'admin'){
+                return res.status(401).json({sucess : false, message : `User ${req.user.id} is not authorized to update course ${course._id}`});
+            };
 
             course = await course.findByIdAndUpdate(req.params.id, req.body, {
                 new : true,
@@ -113,6 +125,11 @@ exports.deleteCourse = async (req, res, next) => {
             if(!course){
                 return res.status(404).json({Error : `No course with id of  ${req.params.id}`});
             }
+
+            // Make sure user is the course owner
+            if(course.user.toString() !== req.user.id && req.user.role !== 'admin'){
+                return res.status(401).json({sucess : false, message : `User ${req.user.id} is not authorized to update this bootcamp`});
+            };
 
             await course.remove();
 

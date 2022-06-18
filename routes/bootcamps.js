@@ -46,5 +46,5 @@ router
     .put(protect, authorize('publisher', 'admin'), Updatebootcamp)
     .delete(protect, authorize('publisher', 'admin'), deletebootcamps);
 
-
+    
 module.exports = router;
