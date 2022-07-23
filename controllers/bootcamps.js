@@ -174,7 +174,7 @@ exports.getbootcampByFiltering = async (req, res, next) => {
     // const limit = parseInt(req.query.limit, 10) || 1;
     // const startIndex = (skipPage - 1) * limit;
     // const endIndex = skipPage * limit;
-    // const total = await Bootcamp.countDocuments();
+    // const total = await Bootcamp.countDocuments(); 
 
     // query = query.skip(startIndex).limit(limit);
 
